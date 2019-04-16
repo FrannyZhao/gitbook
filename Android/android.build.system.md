@@ -172,8 +172,13 @@ LOCAL_MODULE_TAGS的默认值是optional，则该module会被编译但不会inst
 2. 修改LOCAL_MODULE_TAGS := 对应的TARGET_BUILD_VARIANT(eng/debug)
 
 ----------
+常见模块名称
+--
+![image](pic/build_main_modules.png)
+![image](pic/build_main_modules2.png)
 
+----------
 暂时就写这么多啦，以后有需要再补充~
-欢迎指导和提意见 :blush:
+欢迎指导和提意见 
 
 > Written with [StackEdit](https://stackedit.io/).

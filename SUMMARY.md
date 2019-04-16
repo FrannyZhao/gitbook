@@ -6,3 +6,11 @@
   * [Android Build System](Android/android.build.system.md)
   * [Git useful skills](CodeManagement/git.useful.skills.md)
 
+* Android (Notebook of Deep Understanding of Android)
+  * [JNI](Android/jni.md)
+
+* Algorithms
+  * Array
+    * [Two Sum](Algorithms/Array/two.sum.md)
+    * [Median of Two Sorted Arrays](Algorithms/Array/median.of.two.sorted.arrays.md)
+
