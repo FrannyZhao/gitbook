@@ -27,11 +27,30 @@ public class MediaScanner
 * 标识符native不能与abstract连用;
 * 如果一个含有native方法的类被继承，子类会继承这个本地方法并且可以用java语言重写这个方法（这个似乎看起来有些奇怪），同样的如果一个本地方法被final标识，它被继承后不能被重写。
 
-**JVM加载native方法**
+### JNI HelloWorld实例: 静态注册
+
+参考https://blog.csdn.net/xyang81/article/details/41777471自己实现JNI Helloworldhttps://gist.github.com/FrannyZhao/3fb01202e598495033744a40bc841d2e
+
+静态注册是根据函数名来建立Java函数和JNI函数的对应关系的（```.对应 _ , _ 对应 _1```）.
+
+**弊端：**
+
+* 需要编译所有包含native方法的Java类，每个.class都需要用javah生成一个头文件；
+* javah生成的JNI函数名特别长，用起来不太方便；
+* 初次调用native函数时需要通过函数名字搜索对应的JNI层函数来建立关联关系，会影响效率。
+
+**用动态注册来解决上面的弊端：**
+
+
+
+
+
+**JVM加载native方法的过程**
 
 ```flow
 st=>operation: JVM加载包含native方法的类
-a=>operation: 该类的字节码会被加载到内存，在这个被加载的字节码的入口维持着一个该类所有方法描述符的list，这些方法描述符包含这样一些信息：方法代码存于何处，它有哪些参数，方法的描述符（public之类）等等
+a=>operation: 该类的字节码会被加载到内存，在这个被加载的字节码的入口维持着一个该类所有方法描述符的list，
+这些方法描述符包含这样一些信息：方法代码存于何处，它有哪些参数，方法的描述符（public之类）等等
 b=>operation: 如果一个方法描述符内有native，这个描述符块将有一个指向该方法的实现的指针
 c=>operation: 当native方法被调用之前，这些DLL,SO才会被加载，这是通过调用java.system.loadLibrary()实现的
 
@@ -40,13 +59,11 @@ a->b
 b->c
 ```
 
-**TODO: **参考https://www.jianshu.com/p/1ba925157f7d和<https://www.jianshu.com/p/1eb6d859175d>自己实现JNI Helloworld
 
-**观察两个native方法**
+
+**观察android_media_MediaScanner.cpp中两个native方法**
 
 * native_init()
-
-实现在android_media_MediaScanner.cpp中
 
 ```cpp
 static void
@@ -135,4 +152,28 @@ Call<Type>Method:调用返回类型为Type的方法
 CallStatic<Type>Method:调用返回值类型为Type的static方法
 
 等许多的函数，具体的可以查看jni.h文件中的函数名称。
+
+native函数的对应关系：
+
+```cpp
+static const JNINativeMethod gMethods[] = {
+...
+    {
+        "processFile",
+        "(Ljava/lang/String;Ljava/lang/String;Landroid/media/MediaScannerClient;)V",
+        (void *)android_media_MediaScanner_processFile
+    },
+...
+    {
+        "native_init",
+        "()V",
+        (void *)android_media_MediaScanner_native_init
+    },
+...
+};
+```
+
+
+
+
 

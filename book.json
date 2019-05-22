@@ -1,10 +1,31 @@
 {
-  "plugins": [ "page-toc" ],
+  "title" : "Franny's Notebook",
+  "author": "Franny Zhao",
+  "language" : "zh-hans",
+  "description" : "日常学习笔记",
+  "plugins": [ 
+    "page-toc",
+    "flow",
+    "pageview-count",
+    "back-to-top-button",
+    "advanced-emoji",
+    "pageview-count",
+    "splitter",
+    "github",
+    "code",
+    "auto-scroll-table",
+    "-lunr",
+    "-search",
+    "search-pro"
+  ],
   "pluginsConfig": {
     "page-toc": {
       "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4",
       "position": "before-first",
       "showByDefault": true
+    },
+    "github": {
+      "url": "https://github.com/FrannyZhao"
     }
   }
 }

@@ -3,11 +3,11 @@
 * [Initial page](README.md)
 
 * Work Experience
-  * [Android Build System](Android/android.build.system.md)
+  * [Android Build System](Android/Build/android.build.system.md)
   * [Git useful skills](CodeManagement/git.useful.skills.md)
 
 * Android (Notebook of Deep Understanding of Android)
-  * [JNI](Android/jni.md)
+  * [JNI](Android/JNI/jni.md)
 
 * Algorithms
   * Array
