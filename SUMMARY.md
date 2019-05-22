@@ -1,12 +1,12 @@
 # Table of contents
 
-* [Initial page](README.md)
+* [Home page](README.md)
 
 * Work Experience
   * [Android Build System](Android/Build/android.build.system.md)
   * [Git useful skills](CodeManagement/git.useful.skills.md)
 
-* Android (Notebook of Deep Understanding of Android)
+* Android
   * [JNI](Android/JNI/jni.md)
 
 * Algorithms
