@@ -112,7 +112,7 @@ android_media_MediaScanner_processFile(
 
 ### JNI HelloWorld实例: 静态注册
 
-参考https://blog.csdn.net/xyang81/article/details/41777471自己实现JNI Helloworldhttps://gist.github.com/FrannyZhao/3fb01202e598495033744a40bc841d2e
+参考 https://blog.csdn.net/xyang81/article/details/41777471 自己实现JNI Helloworld https://gist.github.com/FrannyZhao/3fb01202e598495033744a40bc841d2e
 
 静态注册是根据函数名来建立Java函数和JNI函数的对应关系的（```.对应 _ , _ 对应 _1```）.
 
@@ -283,29 +283,21 @@ g->h
 
 ## Java和JNI层数据类型转换
 
+### 基本数据类型
 
 
 
+hih
 
 
 
 ## JNIEnv
 
+###简介
 
+**JNIEnv类型实际上代表了Java环境，通过这个JNIEnv* 指针，就可以对Java端的代码进行操作。**例如，创建Java类中的对象，调用Java对象的方法，获取Java对象中的属性等等。JNIEnv的指针会被JNI传入到本地方法的实现函数中来对Java端的代码进行操作。
 
-
-
-## 垃圾回收和异常处理
-
-
-
-
-
-
-
-JNIEnv类型**实际上代表了Java环境，通过这个JNIEnv* 指针，就可以对Java端的代码进行操作。例如，创建Java类中的对象，调用Java对象的方法，获取Java对象中的属性等等。JNIEnv的指针会被JNI传入到本地方法的实现函数中来对Java端的代码进行操作。
-
-JNIEnv类中有很多函数可以用：
+**JNIEnv类中有很多函数可以用：**
 
 NewObject:创建Java类中的对象
 
@@ -317,6 +309,8 @@ Get<Type>Field:获取类型为Type的字段
 
 Set<Type>Field:设置类型为Type的字段的值
 
+`例如：GetObjectField()SetObjectField() GetBooleanField()SetBooleanField() GetByteField()SetByteField() GetCharField()SetCharField() GetShortField()SetShortField() GetIntField()SetIntField() GetLongField()SetLongField() GetFloatField()SetFloatField() GetDoubleField()SetDoubleField()`
+
 GetStatic<Type>Field:获取类型为Type的static的字段
 
 SetStatic<Type>Field:设置类型为Type的static的字段的值
@@ -326,6 +320,83 @@ Call<Type>Method:调用返回类型为Type的方法
 CallStatic<Type>Method:调用返回值类型为Type的static方法
 
 等许多的函数，具体的可以查看jni.h文件中的函数名称。
+
+**全进程只有一个JavaVM对象：**
+
+```jint JNI_OnLoad(JavaVM*vm,void*reserved)```
+
+**JNIEnv是一个与线程相关的变量:**
+
+* 调用JavaVM的AttachCurrentThread函数，就可得到这个线程的JNIEnv结构体。这样就可以在后台线程中回调Java函数了。 
+* 另外，在后台线程退出前，需要调用JavaVM的DetachCurrentThread函数来释放对应的资源。
+
+### 实例：
+
+**1. 保存jfieldID和jmethodID **
+
+如果每次操作jobject前都去查询jmethodID或jfieldID，那么将会影响程序运行的效率，所以我们在初始化的时候可以取出这些ID并保存起来以供后续使用。
+
+```c++
+class MyMediaScannerClient : public MediaScannerClient
+{
+public:
+    MyMediaScannerClient(JNIEnv *env, jobject client)
+        :   mEnv(env),
+            mClient(env->NewGlobalRef(client)),
+            mScanFileMethodID(0),
+            mHandleStringTagMethodID(0),
+            mSetMimeTypeMethodID(0)
+    {
+        ALOGV("MyMediaScannerClient constructor");
+        jclass mediaScannerClientInterface =
+                env->FindClass(kClassMediaScannerClient);
+//先找到android.media.MediaScannerClient类在JNI层中对应的jclass实例。
+        if (mediaScannerClientInterface == NULL) {
+            ALOGE("Class %s not found", kClassMediaScannerClient);
+        } else {
+            mScanFileMethodID = env->GetMethodID(
+                                    mediaScannerClientInterface,
+                                    "scanFile",
+                                    "(Ljava/lang/String;JJZZ)V");
+//取出MediaScannerClient类中函数scanFile的jMethodID。
+...
+        }
+     }
+}
+```
+
+**2.使用jfieldID和jmethodID**
+
+通过JNIEnv的CallVoidMethod（Call<Type>Method, 其中type对应Java函数的返回值类型，例如CallIntMethod、CallVoidMethod），再把jobject、jMethodID和对应的参数传进去，JNI层就能够调用Java对象的函数了。
+
+```c++
+virtual status_t scanFile(const char* path, long long lastModified,
+            long long fileSize, bool isDirectory, bool noMedia)
+    {
+        ALOGV("scanFile: path(%s), time(%lld), size(%lld) and isDir(%d)",
+            path, lastModified, fileSize, isDirectory);
+
+        jstring pathStr;
+        if ((pathStr = mEnv->NewStringUTF(path)) == NULL) {
+            mEnv->ExceptionClear();
+            return NO_MEMORY;
+        }
+
+        mEnv->CallVoidMethod(mClient, mScanFileMethodID, pathStr, lastModified,
+                fileSize, isDirectory, noMedia);
+/* 调用JNIEnv的CallVoidMethod函数，注意CallVoidMethod的参数： 第一个是代表MediaScannerClient的jobject对象， 第二个参数是函数scanFile的jmethodID，后面是Java中scanFile的参数。 */
+        mEnv->DeleteLocalRef(pathStr);
+        return checkAndClearExceptionFromCallback(mEnv, "scanFile");
+    }
+```
+
+## 垃圾回收和异常处理
+
+
+
+
+
+
 
 
 
