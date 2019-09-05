@@ -2,25 +2,27 @@
 
 * [Home page](README.md)
 
+
+
 * Algorithms
   * Array
-    * [Median of Two Sorted Arrays](Algorithms/Array/median.of.two.sorted.arrays.md)
+    * [Median Of Two Sorted Arrays](Algorithms/Array/median.of.two.sorted.arrays.md)
     * [Two Sum](Algorithms/Array/two.sum.md)
   * Sort
     * [Ten Classic Sort](Algorithms/Sort/ten.classic.sort.md)
 * Android
   * Build
-    * [Build System](Android/Build/android.build.system.md)
-    * [Porting APK](Android/Build/porting.apk.to.4.4.4.md)
+    * [Android Build System](Android/Build/android.build.system.md)
+    * [Porting Apk To 4 4 4](Android/Build/porting.apk.to.4.4.4.md)
   * JNI
-    * [JNI](Android/JNI/jni.md)
-* WorkExperience
-  * [Android Add Custom Library](WorkExperience/add.custom.libarary.md)
-  * [Android Adapt](WorkExperience/android.adatper.md)
-  * [Android Force Landscape](WorkExperience/force.landscape.md)
+    * [Jni](Android/JNI/jni.md)
+  * WorkExperience
+    * [Add Custom Libarary](Android/WorkExperience/add.custom.libarary.md)
+    * [Android Adatper](Android/WorkExperience/android.adatper.md)
+    * [Force Landscape](Android/WorkExperience/force.landscape.md)
 * Basic_Knowledge
-  * [Shift](Basic_Knowledge/shift.md)
+    * [Shift](Basic_Knowledge/shift.md)
 * CodeManagement
-  * [Git Useful Skills](CodeManagement/git.useful.skills.md)
+    * [Git Useful Skills](CodeManagement/git.useful.skills.md)
 * Others
-  * [Gradle](Others/gradle.md)
+    * [Gradle](Others/gradle.md)
