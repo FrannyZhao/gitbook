@@ -34,7 +34,9 @@ Theta, O, Omega, Tilde记号：
 
 
 
+Time complexity:
 
+![image](./pic/algorithm_time_complexity.JPG)
 
 
 
