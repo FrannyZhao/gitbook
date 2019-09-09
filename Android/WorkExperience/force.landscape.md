@@ -8,7 +8,8 @@
 
 参考https://blog.csdn.net/songjinshi/article/details/50586333
 
-增加了应用层的修改，防止有的应用写了screenOrientation = portrait, 或者request orientation portrait
+* 增加了应用层的修改，防止有的应用写了screenOrientation = portrait, 或者request orientation portrait
+* 增加了recovery显示的旋转
 
 ## frameworks/native
 
@@ -165,5 +166,93 @@ index 750bad6..6b34af6 100644
          info.taskAffinity = target.info.taskAffinity;
          info.theme = target.info.theme;
          info.softInputMode = target.info.softInputMode;
+```
+
+## bootable/recovery
+
+### recovery UI
+
+```cpp
+diff --git a/screen_ui.cpp b/screen_ui.cpp
+index b8f6ea2..69db797 100644
+--- a/screen_ui.cpp
++++ b/screen_ui.cpp
+@@ -170,8 +170,8 @@ void ScreenRecoveryUI::draw_background_locked() {
+     }
+ 
+     GRSurface* text_surface = GetCurrentText();
+-    int text_x = (gr_fb_width() - gr_get_width(text_surface)) / 2;
+-    int text_y = GetTextBaseline();
++    int text_x = (gr_fb_width() - gr_get_width(text_surface)) / 3; //(gr_fb_width() - gr_get_width(text_surface)) / 2;
++    int text_y = (gr_fb_height() - gr_get_height(text_surface)) / 2; //GetTextBaseline();
+     gr_color(255, 255, 255, 255);
+     gr_texticon(text_x, text_y, text_surface);
+   }
+@@ -184,8 +184,8 @@ void ScreenRecoveryUI::draw_foreground_locked() {
+     GRSurface* frame = GetCurrentFrame();
+     int frame_width = gr_get_width(frame);
+     int frame_height = gr_get_height(frame);
+-    int frame_x = (gr_fb_width() - frame_width) / 2;
+-    int frame_y = GetAnimationBaseline();
++    int frame_x = (gr_fb_width() - frame_width) * 2 / 3; //(gr_fb_width() - frame_width) / 2;
++    int frame_y = (gr_fb_height() - frame_height) / 2; //GetAnimationBaseline();
+     gr_blit(frame, 0, 0, frame_width, frame_height, frame_x, frame_y);
+   }
+ 
+@@ -460,6 +460,7 @@ void ScreenRecoveryUI::LoadBitmap(const char* filename, GRSurface** surface) {
+ 
+ void ScreenRecoveryUI::LoadLocalizedBitmap(const char* filename, GRSurface** surface) {
+   int result = res_create_localized_alpha_surface(filename, locale_.c_str(), surface);
++  RotateSurface(*surface);
+   if (result < 0) {
+     LOG(ERROR) << "couldn't load bitmap " << filename << " (error " << result << ")";
+   }
+@@ -841,3 +842,29 @@ void ScreenRecoveryUI::KeyLongPress(int) {
+   // will change color to indicate a successful long press.
+   Redraw();
+ }
++
++void ScreenRecoveryUI::RotateSurface(GRSurface *surface) {
++  if (surface == NULL) return;
++  if (surface->pixel_bytes != 1) return;
++  int data_size = surface->height * surface->row_bytes;
++  unsigned char*  src = new unsigned char[data_size];
++  if (src == NULL) return;
++  memcpy(src, surface->data, data_size);
++  unsigned char *dst = surface->data;
++  int width = surface->width, height = surface->height;
++  for (int j = 0; j < height; j++) {
++    unsigned char *sx = src + j * surface->row_bytes;
++    unsigned char *px = dst + (height - 1 - j) * surface->pixel_bytes;
++    for (int i = 0; i < width; i++) {
++      *px = *sx;
++      sx++;
++      px += height;
++    }
++  }
++  surface->width = height;
++  surface->height = width;
++  surface->row_bytes = surface->pixel_bytes * surface->width;
++  delete []src;
++  return;
++}
++  
+```
+
+```cpp
+diff --git a/screen_ui.h b/screen_ui.h
+index 8231a2b..6ccd232 100644
+--- a/screen_ui.h
++++ b/screen_ui.h
+@@ -191,6 +191,9 @@ class ScreenRecoveryUI : public RecoveryUI {
+   // Similar to DrawTextLines() to draw multiple text lines, but additionally wraps long lines.
+   // Returns the offset it should be moving along Y-axis.
+   int DrawWrappedTextLines(int x, int y, const char* const* lines) const;
++
++  // Rotate 90 degree
++  void RotateSurface(GRSurface *);
+ };
+ 
+ #endif  // RECOVERY_UI_H
 ```
 
