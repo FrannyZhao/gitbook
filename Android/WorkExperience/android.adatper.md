@@ -48,3 +48,9 @@ https://github.com/wildma/ScreenAdaptation/blob/master/app/src/main/res/values/d
 ```
 
 * 图片用.9; 多用相对布局，尽量不用绝对布局；
+
+
+
+
+
+3. 通过gradle flavor选择不同的sourceset
