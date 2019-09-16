@@ -82,7 +82,7 @@ public class BubbleSort {
 import java.util.Arrays;
 public class SelectionSort {
     public int[] sort(int[] srcArr) {
-        int[] arr = Arrays.copyof(srcArr, srcArr.length);
+        int[] arr = Arrays.copyOf(srcArr, srcArr.length);
         int min, tmp;
         for (int i = 0; i < arr.length - 1; i++) {
             min = i;
@@ -138,7 +138,7 @@ public class InsertSort {
                 arr[j] = arr[j - 1];
                 j--;
             }
-            arr[i] = tmp;
+            arr[j] = tmp;
         }
         return arr;
     }
@@ -390,63 +390,218 @@ public class QuickSort {
 ## Heap sort
 
 ```java
+package sort;
 
+import java.util.Arrays;
+
+public class HeapSort {
+    public int[] sort(int[] srcArr) {
+        int[] arr = Arrays.copyOf(srcArr, srcArr.length);
+        for (int i = (int) Math.floor(arr.length / 2); i >= 0; i--) {
+            heapify(arr, i, arr.length);
+        }
+        int length = arr.length;
+        for (int i = length - 1; i > 0; i--) {
+            //将堆顶元素与末位元素调换
+            int tmp = arr[0];
+            arr[0] = arr[i];
+            arr[i] = tmp;
+            length--; //数组长度-1 隐藏堆尾元素
+            heapify(arr, 0, length);
+        }
+        return arr;
+    }
+
+    private void heapify(int[] arr, int index, int length) {
+        int leftChild = 2 * index + 1;//左子节点下标
+        int rightChild = 2 * index + 2;//右子节点下标
+        int present = index;//要调整的节点下标
+        //调整左边
+        if (leftChild < length && arr[leftChild] > arr[present]) {
+            present = leftChild;
+        }
+        //调整右边
+        if (rightChild < length && arr[rightChild] > arr[present]) {
+            present = rightChild;
+        }
+        //如果下标不相等 证明调换过了
+        if (present != index) {
+            //交换值
+            int temp = arr[index];
+            arr[index] = arr[present];
+            arr[present] = temp;
+            //继续调整
+            heapify(arr, present, length);
+        }
+    }
+}
 ```
 
 * 重点
 
-> 
+> ​        int leftChild = 2 * index + 1;//左子节点下标
+> ​        int rightChild = 2 * index + 2;//右子节点下标
+> ​        int present = index;//要调整的节点下标
+> ​        //调整左边
+> ​        if (leftChild < length && arr[leftChild] > arr[present]) {
+> ​            present = leftChild;
+> ​        }
+> ​        //调整右边
+> ​        if (rightChild < length && arr[rightChild] > arr[present]) {
+> ​            present = rightChild;
+> ​        }
+> ​        //如果下标不相等 证明调换过了
+> ​        if (present != index) {
+> ​            //交换值
+> ​            int temp = arr[index];
+> ​            arr[index] = arr[present];
+> ​            arr[present] = temp;
+> ​            //继续调整
+> ​            heapify(arr, present, length);
+> ​        }
 
 * 时间：
   $$
-  O()
+  O(NlgN)
   $$
 
-* 空间：O()
+* 空间：O(1)
 
-* 稳定性： 
+* 稳定性： 不稳定
 
   
 
 ## Counting sort
 
 ```java
+package sort;
 
+import java.util.Arrays;
+
+/**
+ * 计数排序只适用于正整数, 并且取值范围相差不大的数组排序使用，它的排序的速度是非常可观的。
+ * @author zhaofengyi
+ *
+ */
+public class CoutingSort {
+    public int[] sort(int[] srcArr) {
+        int[] arr = Arrays.copyOf(srcArr, srcArr.length);
+        //找到最大值和最小值
+        int maxValue = arr[0];
+        int minValue = arr[0];
+        for (int value : arr) {
+            if (maxValue < value) {
+                maxValue = value;
+            }
+            if (minValue > value) {
+                minValue = value;
+            }
+        }
+        //创建计数数组
+        int[] bucket = new int[maxValue - minValue + 1];
+        for (int value : arr) {
+            bucket[value - minValue]++;
+        }
+        int sortedIndex = 0;
+        for (int j = 0; j < bucket.length; j++) {
+            while (bucket[j] > 0) {
+                arr[sortedIndex++] = j + minValue;
+                bucket[j]--;
+            }
+        }
+        return arr;
+    }
+}
 ```
 
 * 重点
 
-> 
+> int[] bucket = new int[maxValue - minValue + 1];
+>
+> for (int value : arr) {
+>     bucket[value - minValue]++;
+> }
+>
+> while (bucket[j] > 0) {
+>     arr[sortedIndex++] = j + minValue;
+>     bucket[j]--;
+> }
 
 * 时间：
   $$
-  O()
+  O(N+k)
   $$
 
 * 空间：O()
 
-* 稳定性： 
+* 稳定性： 稳定
 
   
 
 ## Bucket sort
 
 ```java
+package sort;
 
+import java.util.Arrays;
+
+public class BucketSort {
+    public int[] sort(int[] srcArr) {
+        int[] arr = Arrays.copyOf(srcArr, srcArr.length);
+        int bucketSize = 5;
+        if (arr.length == 0) {
+            return arr;
+        }
+        int minValue = arr[0];
+        int maxValue = arr[0];
+        for (int value : arr) {
+            if (value < minValue) {
+                minValue = value;
+            } else if (value > maxValue) {
+                maxValue = value;
+            }
+        }
+        int bucketCount = (int) Math.floor((maxValue - minValue) / bucketSize) + 1;
+        int[][] buckets = new int[bucketCount][0];
+        // 利用映射函数将数据分配到各个桶中
+        for (int i = 0; i < arr.length; i++) {
+            int index = (int) Math.floor((arr[i] - minValue) / bucketSize); 
+            //自动扩容，并插入排序
+            int originLength = buckets[index].length;
+            buckets[index] = Arrays.copyOf(buckets[index], originLength + 1);
+            int j = originLength;
+            while (j > 0 && arr[i] < buckets[index][j - 1]) {
+                buckets[index][j] = buckets[index][j - 1];
+                j--;
+            }
+            buckets[index][j] = arr[i];
+        }
+        int arrIndex = 0;
+        for (int[] bucket : buckets) {
+            if (bucket.length <= 0) {
+                continue;
+            }
+            for (int value : bucket) {
+                arr[arrIndex++] = value;
+            }
+        }
+        return arr;
+    }
+}
 ```
 
 * 重点
 
-> 
+> 在额外空间充足的情况下，尽量增大桶的数量，极限情况下每个桶只有一个数据时，或者是每只桶只装一个值时，完全避开了桶内排序的操作，桶排序的最好时间复杂度就能够达到 O(n)。
 
 * 时间：
   $$
-  O()
+  O(N+k)
   $$
 
-* 空间：O()
+* 空间：O(N+k)
 
-* 稳定性： 
+* 稳定性： 稳定
 
   
 
@@ -462,12 +617,12 @@ public class QuickSort {
 
 * 时间：
   $$
-  O()
+  O(N*k)
   $$
 
-* 空间：O()
+* 空间：O(N+k)
 
-* 稳定性： 
+* 稳定性： 稳定
 
 
 
