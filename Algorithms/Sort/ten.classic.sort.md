@@ -562,6 +562,36 @@ public class BucketSort {
             }
         }
         int bucketCount = (int) Math.floor((maxValue - minValue) / bucketSize) + 1;
+        
+        /* 用ArrayList实现桶 
+        ArrayList<ArrayList<Integer>> bucketList = new ArrayList<>();
+        for (int i = 0; i < bucketCount; i++) {
+            bucketList.add(new ArrayList<Integer>());
+        }
+        // 利用映射函数将数据分配到各个桶中
+        for (int i = 0; i < arr.length; i++) {
+            int index = (int) Math.floor((arr[i] - minValue) / bucketSize); 
+            int originLength = bucketList.get(index).size();
+            int j = originLength;
+            bucketList.get(index).add(arr[i]);
+            while (j > 0 && arr[i] < bucketList.get(index).get(j - 1)) {
+                int value = bucketList.get(index).get(j - 1);
+                bucketList.get(index).set(j, value);
+                j--;
+            }
+            bucketList.get(index).set(j, arr[i]);
+        }
+        int arrIndex = 0;
+        for (ArrayList<Integer> bucket : bucketList) {
+            if (bucket.size() <= 0) {
+                continue;
+            }
+            for (int value : bucket) {
+                arr[arrIndex++] = value;
+            }
+        }
+        
+        /* 用数组实现酸奶 */
         int[][] buckets = new int[bucketCount][0];
         // 利用映射函数将数据分配到各个桶中
         for (int i = 0; i < arr.length; i++) {
@@ -585,6 +615,7 @@ public class BucketSort {
                 arr[arrIndex++] = value;
             }
         }
+        
         return arr;
     }
 }
@@ -608,18 +639,72 @@ public class BucketSort {
 ## Radix sort
 
 ```java
+package sort;
 
+import java.util.Arrays;
+
+public class RadixSort {
+    public int[] sort(int[] srcArr) {
+        int[] arr = Arrays.copyOf(srcArr, srcArr.length);
+        // 找到最大值
+        int maxValue = arr[0];
+        for (int value : arr) {
+            if (value > maxValue) {
+                maxValue = value;
+            }
+        }
+        // 找到最大位数
+        int numLength = 0;
+        do {
+            numLength++;
+            maxValue /= 10;
+        } while (maxValue != 0);
+        // 开始排序
+        int mod = 10;
+        int dev = 1;
+        for (int i = 0; i < numLength; i++, dev *= 10, mod *= 10) {
+            // 考虑负数的情况，这里扩展一倍队列数，其中 [0-9]对应负数，[10-19]对应正数 (bucket + 10)
+            int[][] counter = new int[mod * 2][0];
+            for (int j = 0; j < arr.length; j++) {
+                int bucket = ((arr[j] % mod) / dev) + mod;
+                counter[bucket] = Arrays.copyOf(counter[bucket], counter[bucket].length + 1);
+                counter[bucket][counter[bucket].length - 1] = arr[j];
+            }
+            int pos = 0;
+            for (int[] bucket : counter) {
+                for (int value : bucket) {
+                    arr[pos++] = value;
+                }
+            }
+        }
+        return arr;
+    }
+}
 ```
 
 * 重点
 
-> 
+```java
+            int[][] counter = new int[mod * 2][0];
+            for (int j = 0; j < arr.length; j++) {
+                int bucket = ((arr[j] % mod) / dev) + mod;
+                counter[bucket] = Arrays.copyOf(counter[bucket], counter[bucket].length + 1);
+                counter[bucket][counter[bucket].length - 1] = arr[j];
+            }
+            int pos = 0;
+            for (int[] bucket : counter) {
+                for (int value : bucket) {
+                    arr[pos++] = value;
+                }
+            }
+```
 
 * 时间：
   $$
   O(N*k)
   $$
-
+*k是最大值的位数*
+  
 * 空间：O(N+k)
 
 * 稳定性： 稳定
