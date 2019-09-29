@@ -29,7 +29,13 @@ public List<LauncherActivityInfo> getAllApps(Context context) {
 LauncherActivityInfo launcherActivityInfo = mAppsHighVersion.get(position);
 holder.appName.setText(launcherActivityInfo.getLabel().toString());
 holder.appIcon.setImageDrawable(launcherActivityInfo.getIcon(320));
-// todo
+holder.rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+ mLauncher.startActivity(mPackageManager.getLaunchIntentForPackage(launcherActivityInfo.getApplicationInfo().packageName));
+                    stopAnimation();
+                }
+            });
 ```
 
 
@@ -54,7 +60,13 @@ public List<ResolveInfo> getAllApps(Context context) {
 ResolveInfo resolveInfo = mAppsLowVersion.get(position);
 holder.appName.setText(resolveInfo.activityInfo.applicationInfo.loadLabel(mPackageManager));
 holder.appIcon.setImageDrawable(resolveInfo.activityInfo.applicationInfo.loadIcon(mPackageManager));
-// todo
+holder.rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mLauncher.startActivity(mPackageManager.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName));
+                    stopAnimation();
+                }
+            });
 ```
 
 
