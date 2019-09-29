@@ -201,7 +201,7 @@ private class PackageUpdatedTask {
 
 
 
-###Android原生Launcher源码更多分析参考：
+### Android原生Launcher源码更多分析参考：
 
 * Android 7.0 Launcher3源码实现全解析
 
@@ -216,3 +216,10 @@ https://blog.csdn.net/kuaiguixs/article/details/78890509
 
 https://github.com/FrannyZhao/LauncherDemo
 
+
+
+衍生阅读：
+
+Android Launcher 启动 Activity 的工作过程
+
+https://blog.csdn.net/qian520ao/article/details/78156214

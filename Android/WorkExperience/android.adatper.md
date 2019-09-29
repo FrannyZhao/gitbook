@@ -10,7 +10,14 @@ https://www.jianshu.com/p/1302ad5a4b04
 
 https://github.com/wildma/ScreenAdaptation/blob/master/app/src/main/res/values/dimens.xml
 
+不能应对density变化？
+
 2. 用限制性布局ConstraintLayout
+
+   少用dp值，多用百分比
+
+   可以应对density变化
+
 
 > implementation 'com.android.support.constraint:constraint-layout:1.1.3'
 
@@ -44,13 +51,28 @@ https://github.com/wildma/ScreenAdaptation/blob/master/app/src/main/res/values/d
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintVertical_bias="0.55" />
+    <ImageView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.15"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintVertical_bias="0.7"
+                android:src="@drawable/testImg" />
 </android.support.constraint.ConstraintLayout>
 ```
 
-* 图片用.9; 多用相对布局，尽量不用绝对布局；
+* 图片用.9或者svg; 多用相对布局，尽量不用绝对布局；
 
 
 
 
 
 3. 通过gradle flavor选择不同的sourceset
+4. 用自适应textview
+https://blog.csdn.net/Virgil_K2017/article/details/88725298
