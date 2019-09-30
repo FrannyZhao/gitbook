@@ -25,6 +25,7 @@
     * [Force Landscape](Android/WorkExperience/force.landscape.md)
     * [Launcher](Android/WorkExperience/launcher.md)
     * [Set Default IME](Android/WorkExperience/set.default.IME.md)
+    * [Longer Build Finger Print](Android/WorkExperience/longer.build.finger.print.md)
 * Basic_Knowledge
     * [Shift](Basic_Knowledge/shift.md)
 * CodeManagement
