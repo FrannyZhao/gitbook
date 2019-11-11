@@ -172,9 +172,22 @@ index 750bad6..6b34af6 100644
 
 ### recovery UI
 
+用命令`convert progress_fill.png -rotate 90 progress_fill.png && convert progress_empty.png -rotate 90 progress_empty.png` 把以下图片旋转90度：
+
+res-hdpi/images/progress_empty.png
+ res-hdpi/images/progress_fill.png
+ res-mdpi/images/progress_empty.png
+ res-mdpi/images/progress_fill.png
+ res-xhdpi/images/progress_empty.png
+ res-xhdpi/images/progress_fill.png
+ res-xxhdpi/images/progress_empty.png
+ res-xxhdpi/images/progress_fill.png
+ res-xxxhdpi/images/progress_empty.png
+ res-xxxhdpi/images/progress_fill.png
+
 ```cpp
 diff --git a/screen_ui.cpp b/screen_ui.cpp
-index b8f6ea2..69db797 100644
+index b8f6ea2..153d1b1 100644
 --- a/screen_ui.cpp
 +++ b/screen_ui.cpp
 @@ -170,8 +170,8 @@ void ScreenRecoveryUI::draw_background_locked() {
@@ -199,7 +212,54 @@ index b8f6ea2..69db797 100644
      gr_blit(frame, 0, 0, frame_width, frame_height, frame_x, frame_y);
    }
  
-@@ -460,6 +460,7 @@ void ScreenRecoveryUI::LoadBitmap(const char* filename, GRSurface** surface) {
+@@ -193,8 +193,8 @@ void ScreenRecoveryUI::draw_foreground_locked() {
+     int width = gr_get_width(progressBarEmpty);
+     int height = gr_get_height(progressBarEmpty);
+ 
+-    int progress_x = (gr_fb_width() - width) / 2;
+-    int progress_y = GetProgressBaseline();
++    int progress_x = (gr_fb_width() - width) / 5; //(gr_fb_width() - width) / 2;
++    int progress_y = (gr_fb_height() - height) / 2; //GetProgressBaseline();
+ 
+     // Erase behind the progress bar (in case this was a progress-only update)
+     gr_color(0, 0, 0, 255);
+@@ -202,24 +202,27 @@ void ScreenRecoveryUI::draw_foreground_locked() {
+ 
+     if (progressBarType == DETERMINATE) {
+       float p = progressScopeStart + progress * progressScopeSize;
+-      int pos = static_cast<int>(p * width);
++      int pos = static_cast<int>(p * height);
+ 
+       if (rtl_locale_) {
+         // Fill the progress bar from right to left.
+         if (pos > 0) {
+-          gr_blit(progressBarFill, width - pos, 0, pos, height, progress_x + width - pos,
+-                  progress_y);
++          //gr_blit(progressBarFill, width - pos, 0, pos, height, progress_x + width - pos, progress_y);
++          gr_blit(progressBarFill, 0, height - pos, width, pos, progress_x, progress_y + width - pos);
+         }
+-        if (pos < width - 1) {
+-          gr_blit(progressBarEmpty, 0, 0, width - pos, height, progress_x, progress_y);
++        if (pos < height - 1) {
++          //gr_blit(progressBarEmpty, 0, 0, width - pos, height, progress_x, progress_y);
++          gr_blit(progressBarEmpty, 0, 0, width, height - pos, progress_x, progress_y);
+         }
+       } else {
+         // Fill the progress bar from left to right.
+         if (pos > 0) {
+-          gr_blit(progressBarFill, 0, 0, pos, height, progress_x, progress_y);
++          //gr_blit(progressBarFill, 0, 0, pos, height, progress_x, progress_y);
++          gr_blit(progressBarFill, 0, 0, width, pos, progress_x, progress_y);
+         }
+-        if (pos < width - 1) {
+-          gr_blit(progressBarEmpty, pos, 0, width - pos, height, progress_x + pos, progress_y);
++        if (pos < height - 1) {
++          //gr_blit(progressBarEmpty, pos, 0, width - pos, height, progress_x + pos, progress_y);
++          gr_blit(progressBarEmpty, 0, pos, width, height - pos, progress_x, progress_y + pos);
+         }
+       }
+     }
+@@ -460,6 +463,7 @@ void ScreenRecoveryUI::LoadBitmap(const char* filename, GRSurface** surface) {
  
  void ScreenRecoveryUI::LoadLocalizedBitmap(const char* filename, GRSurface** surface) {
    int result = res_create_localized_alpha_surface(filename, locale_.c_str(), surface);
@@ -207,7 +267,18 @@ index b8f6ea2..69db797 100644
    if (result < 0) {
      LOG(ERROR) << "couldn't load bitmap " << filename << " (error " << result << ")";
    }
-@@ -841,3 +842,29 @@ void ScreenRecoveryUI::KeyLongPress(int) {
+@@ -611,8 +615,8 @@ void ScreenRecoveryUI::SetProgress(float fraction) {
+   if (fraction > 1.0) fraction = 1.0;
+   if (progressBarType == DETERMINATE && fraction > progress) {
+     // Skip updates that aren't visibly different.
+-    int width = gr_get_width(progressBarEmpty);
+-    float scale = width * progressScopeSize;
++    int height = gr_get_height(progressBarEmpty);
++    float scale = height * progressScopeSize;
+     if ((int)(progress * scale) != (int)(fraction * scale)) {
+       progress = fraction;
+       update_progress_locked();
+@@ -841,3 +845,29 @@ void ScreenRecoveryUI::KeyLongPress(int) {
    // will change color to indicate a successful long press.
    Redraw();
  }
@@ -236,7 +307,7 @@ index b8f6ea2..69db797 100644
 +  delete []src;
 +  return;
 +}
-+  
++   
 ```
 
 ```cpp
