@@ -51,6 +51,12 @@
     }
 ```
 
+```java
+MediaProjectionManager mediaProjectionManager = (MediaProjectionManager) getSystemService(MEDIA_PROJECTION_SERVICE);
+MediaProjection mp = mediaProjectionManager.getMediaProjection(
+                    Activity.RESULT_OK, intent);//这个intent传的是上面setMediaProjectionIntentWithoutPermission得到的intent
+```
+
 
 
 ## 判断是否首次启动或者factory reset后首次启动

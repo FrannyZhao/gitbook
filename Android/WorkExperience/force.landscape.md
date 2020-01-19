@@ -6,6 +6,10 @@
 
 # Android强制更改为横屏方案
 
+## 需求
+
+显示屏的长宽是在kernel里面定义的，甲方给的android sdk里面没有kernel的代码，无法修改，只能在aosp里面修改代码，使系统从竖屏变成横屏的。
+
 参考https://blog.csdn.net/songjinshi/article/details/50586333
 
 * 增加了应用层的修改，防止有的应用写了screenOrientation = portrait, 或者request orientation portrait

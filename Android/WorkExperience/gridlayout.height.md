@@ -1,4 +1,4 @@
-# GridLayout
+# 动态适配GridLayout的高度
 
 参考： https://www.jianshu.com/p/441d60be7d8a
 
