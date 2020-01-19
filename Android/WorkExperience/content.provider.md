@@ -101,7 +101,7 @@ public class FrannyTestProvider extends ContentProvider {
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.moos.launcher">
+    package="com.m.launcher">
     <uses-permission android:name="com.franny.test.READ_PERMISSION"/>
 
     <application
@@ -111,6 +111,6 @@ public class FrannyTestProvider extends ContentProvider {
 ### XXActivity.java
 
 ```JAVA
-Timber.i("shared value: " + getContentResolver().getType(Uri.parse("content://com.jd.iot/device_id")));
+Timber.i("shared value: " + getContentResolver().getType(Uri.parse("content://com.m.iot/device_id")));
 ```
 

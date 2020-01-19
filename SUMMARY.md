@@ -14,22 +14,25 @@
   * Sort
     * [Ten Classic Sort](Algorithms/Sort/ten.classic.sort.md)
 * Android
-  * Build
-    * [Android Build System](Android/Build/android.build.system.md)
-    * [Porting Apk To 4 4 4](Android/Build/porting.apk.to.4.4.4.md)
-  * JNI
-    * [Jni](Android/JNI/jni.md)
-  * WorkExperience
-    * [Add Custom Libarary](Android/WorkExperience/add.custom.libarary.md)
-    * [Android Adatper](Android/WorkExperience/android.adatper.md)
-    * [Force Landscape](Android/WorkExperience/force.landscape.md)
-    * [Launcher](Android/WorkExperience/launcher.md)
-    * [Set Default IME](Android/WorkExperience/set.default.IME.md)
-    * [Longer Build Finger Print](Android/WorkExperience/longer.build.finger.print.md)
+    * Build
+      * [Android Build System](Android/Build/android.build.system.md)
+      * [Porting Apk To 4 4 4](Android/Build/porting.apk.to.4.4.4.md)
+    * JNI
+      * [Jni](Android/JNI/jni.md)
+    * WorkExperience
+      * [Add Custom Libarary](Android/WorkExperience/add.custom.libarary.md)
+      * [Android Adatper](Android/WorkExperience/android.adatper.md)
+      * [Aosp Modify](Android/WorkExperience/aosp.modify.md)
+      * [Content Provider](Android/WorkExperience/content.provider.md)
+      * [Force Landscape](Android/WorkExperience/force.landscape.md)
+      * [Gridlayout Height](Android/WorkExperience/gridlayout.height.md)
+      * [Hidden Api](Android/WorkExperience/hidden.api.md)
+      * [Launcher](Android/WorkExperience/launcher.md)
+      * [Longer Build Finger Print](Android/WorkExperience/longer.build.finger.print.md)
+      * [Set Default IME](Android/WorkExperience/set.default.IME.md)
 * Basic_Knowledge
+    * [Design](Basic_Knowledge/design.md)
     * [Shift](Basic_Knowledge/shift.md)
 * CodeManagement
+    * [Code Style Check](CodeManagement/code.style.check.md)
     * [Git Useful Skills](CodeManagement/git.useful.skills.md)
-* Others
-    * [Fangjia](Others/fangjia.md)
-    * [Gradle](Others/gradle.md)

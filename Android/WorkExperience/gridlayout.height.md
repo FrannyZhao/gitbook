@@ -27,20 +27,20 @@ setLayoutManager(new GridLayoutManager(this, columeNum));
 在子view的onMeasure里面把宽高设成一样
 
 ```xml
-<com.moos.launcher.CustomConstraintlayout
+<com.m.launcher.CustomConstraintlayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
     ...
-</com.moos.launcher.CustomConstraintlayout>
+</com.m.launcher.CustomConstraintlayout>
 ```
 
 
 
 ```java
-package com.moos.launcher;
+package com.m.launcher;
 
 import android.content.Context;
 import android.util.AttributeSet;
