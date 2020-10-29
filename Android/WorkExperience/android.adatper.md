@@ -4,7 +4,7 @@
 
 ## 屏幕适配
 
-#### 定义多种分辨率的dimens.xml（不推荐）
+### 定义多种分辨率的dimens.xml（不推荐）
 
 用AndroidStudio插件ScreenMatch根据屏幕尺寸生成不同的dimen
 
@@ -14,7 +14,7 @@ https://github.com/wildma/ScreenAdaptation/blob/master/app/src/main/res/values/d
 
 
 
-#### 用限制性布局ConstraintLayout
+### 用限制性布局ConstraintLayout(推荐)
 
 > implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
@@ -131,7 +131,86 @@ androidx的话用`androidx.appcompat.widget.AppCompatTextView`
 
 
 
-#### 其他
+#### 自适应GridLayoutManager
+
+RecyclerView包含的子View的宽高是这样定义的：
+
+* GridLayoutManager，横向的话，宽度wrap_content，高度=RecyclerView高度/spanCount;
+
+  竖向的话，高度wrap_content, 宽度=RecyclerView宽度/spanCount;
+
+  默认是竖向。
+
+```java
+public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+        if (mOrientation == HORIZONTAL) {
+            return new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        } else {
+            return new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
+    }
+```
+
+* LinearLayoutManager，宽高都是wrap_content
+  
+
+```java
+public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+        return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+```
+
+wrap_content的话，实际尺寸就由子View的尺寸决定了，那么子View的尺寸必须要有实际的dp值。
+
+
+
+
+
+
+
+```java
+import android.content.Context;
+
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import timber.log.Timber;
+
+public class ConstraintGridLayoutManager extends GridLayoutManager {
+    private @RecyclerView.Orientation int mOrientation;
+    private float mPercent;
+
+    public ConstraintGridLayoutManager(Context context, int spanCount,
+                                       @RecyclerView.Orientation int orientation,
+                                       boolean reverseLayout, float percent) {
+        super(context, spanCount, orientation, reverseLayout);
+        mOrientation = orientation;
+        mPercent = percent;
+    }
+
+    @Override
+    public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+        RecyclerView.LayoutParams layoutParams = super.generateDefaultLayoutParams();
+        if (mOrientation == RecyclerView.HORIZONTAL) {
+            layoutParams.width = (int)(getWidth() * mPercent);
+        } else {
+            layoutParams.height = (int)(getWidth() * mPercent);
+        }
+        Timber.i("generateDefaultLayoutParams w:%s, h:%s, parent width:%s, parent height:%s",
+                layoutParams.width, layoutParams.height, getWidth(), getHeight());
+        return layoutParams;
+    }
+}
+```
+
+
+
+
+
+### 其他
 
 * 图片用.9或者svg
 * 多用相对布局，尽量不用绝对布局

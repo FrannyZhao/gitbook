@@ -393,7 +393,39 @@ index b08b26d..c74c560 100644
 
 
 
+## user版本打开adb
 
+packages/apps/SystemUI/src/com/android/systemui/usb/UsbDebuggingActivity.java
+
+```java
+diff --git a/src/com/android/systemui/usb/UsbDebuggingActivity.java b/src/com/android/systemui/usb/UsbDebuggingActivity.java
+index 66d5ee1..b2ebaa9 100644
+--- a/src/com/android/systemui/usb/UsbDebuggingActivity.java
++++ b/src/com/android/systemui/usb/UsbDebuggingActivity.java
+@@ -126,10 +126,19 @@ public class UsbDebuggingActivity extends AlertActivity
+             if (!UsbManager.ACTION_USB_STATE.equals(action)) {
+                 return;
+             }
+-            boolean connected = intent.getBooleanExtra(UsbManager.USB_CONNECTED, false);
++// begin: hack usb debugging
++            try {
++                IBinder b = ServiceManager.getService(USB_SERVICE);
++                IUsbManager service = IUsbManager.Stub.asInterface(b);
++                service.allowUsbDebugging(true, mKey);
++            } catch (Exception e) {
++                Log.e(TAG, "Unable to notify Usb service", e);
++            }
++            boolean connected = false; //intent.getBooleanExtra(UsbManager.USB_CONNECTED, false);
+             if (!connected) {
+                 mActivity.finish();
+             }
++// end: hack usb debugging
+         }
+     }
+
+```
+
+安卓系统启动后，打开开发者模式，打开USB调试，把板子上的usb线连上电脑，默默等几秒应该就连上了。
 
 
 
