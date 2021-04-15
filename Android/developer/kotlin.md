@@ -379,6 +379,22 @@ fun <T> Iterable<T>.joinToString(
 fun getUpperCaseName(): String? = this.name?.toUpperCase()
 ```
 
+### Range
+
+`i in 1..4` i范围在[1,4]
+
+`i in 4 downTo 1` i范围在4，3，2，1
+
+`i in 1..8 step 2` i范围在1，3，5，7
+
+`i in 8 downTo 1 step 2` i范围在8，6，4，2
+
+`i in 1 until 10` i范围在[1,10)
+
+
+
+
+
 # Kotlin Koans
 
 ## 默认参数
@@ -701,6 +717,157 @@ data class User(var name: String, var age)
 
 编译器会自动生成equals()/hashCode(), toString(), componentN(), copy()
 
+### sealed classes
+
+类级别的enum, sealed class是抽象的
+
+```kotlin
+sealed class Expr {
+  data class Const(val number: Double) : Expr()
+	data class Sum(val e1: Expr, val e2: Expr) : Expr()
+	object NotANumber : Expr()
+}
+```
+
+```kotlin
+fun eval(expr: Expr): Double = when(expr) {
+    is Const -> expr.number
+    is Sum -> eval(expr.e1) + eval(expr.e2)
+    NotANumber -> Double.NaN
+    // the `else` clause is not required because we've covered all the cases
+}
+```
+
+### extensions
+
+kotlin提供的扩展类的新办法：不通过传统的继承或者装饰模式，而是扩展方法和扩展属性。
+
+#### extension functions
+
+`接收类型.扩展方法名(参数...) {扩展语句}`
+
+扩展方法体的语句中的`this`表示接收类。
+
+* 例如给MutableList<Int>加一个swap方法：
+
+```kotlin
+fun MutableList<Int>.swap(index1: Int, index2: Int) {
+  val tmp = this[index1] // 'this' corresponds to the list
+  this[index1] = this[index2]
+  this[index2] = tmp
+}
+```
+
+扩展了之后就可以直接这样调用：
+
+```kotlin
+val list = mutableListOf(1,2,3)
+list.swap(1,2) // list变成1，3，2
+```
+
+* 扩展方法只在它**定义**的类型上调用，而不是它**运行**时的实际类型上调用，例如：
+
+```kotlin
+open class Shape
+class Rectangle: Shape()
+fun Shape.getName() = "Shape"
+fun Rectangle.getName() = "Rectangle"
+fun printClassName(s: Shape) {
+  println(s.getName())
+}    
+printClassName(Rectangle())
+```
+
+打印出Shape，而不是Rectangle, 因为s定义的是Shape类型：`fun printClassName(s: Shape){}`
+
+* 如果扩展方法跟类的成员方法签名一模一样，则扩展方法无效，始终会调用成员方法。
+* 在外部调用扩展方法需要import:
+
+```kotlin
+package org.example.declarations
+ 
+fun List<String>.getLongestString() { /*...*/}
+```
+
+调用：
+
+```kotlin
+package org.example.usage
+
+import org.example.declarations.getLongestString
+
+fun main() {
+    val list = listOf("red", "green", "blue")
+    list.getLongestString()
+}
+```
+
+* 在一个类中扩展其他类的方法，这个扩展的方法有两个隐藏的接收类型：
+
+1. Dispatch receiver: 定义扩展方法的类，可以用this@ClassName.调用这个类型的方法
+2. extension receiver: 定义的接收类型，可以用this.调用这个类型的方法
+
+举例：
+
+```kotlin
+class Host(val hostname: String) {
+    fun printHostname() { print(hostname) }
+}
+
+class Connection(val host: Host, val port: Int) {
+     fun printPort() { print(port) }
+
+     fun Host.printConnectionString() {
+         printHostname()   // calls Host.printHostname(), 这是extension receiver, 也可以写作this.printHostname()
+         print(":")
+         printPort()   // calls Connection.printPort(), 这是dispatch receiver, 也可以写作this@Connection.printPort()
+     }
+
+     fun connect() {
+         /*...*/
+         host.printConnectionString()   // calls the extension function
+     }
+}
+
+fun main() {
+    Connection(Host("kotl.in"), 443).connect()
+    //Host("kotl.in").printConnectionString(443)  // error, the extension function is unavailable outside Connection
+}
+```
+
+* open的扩展方法可以被子类override
+
+#### extension properties
+
+举例：
+
+```kotlin
+val <T> List<T>.lastIndex: Int
+	get() = size - 1
+```
+
+#### companion object extension
+
+* 接收类型是这个companion object的名字:
+
+```kotlin
+class MyClass {
+  companion object Factory {}
+}
+
+fun MyClass.Factory.extensionFun() {}
+```
+
+如果companion object名字省略了，则是Companion:
+
+```kotlin
+class MyClass {
+  companion object {}
+}
+
+fun MyClass.Companion.extensionFun() {}
+```
+
 ## Properties
 
 定义：
@@ -746,6 +913,15 @@ index is 5
 ### todo
 
 用`::`对属性引用
+
+## Collections
+
+```kotlin
+val numbers = listOf("one", "two", "three", "four")
+val sortedNumbers = numbers.sortedBy { it.length }
+val sortedByLast = numbers.sortedByDescending { it.last() }
+val sortedByLength = numbers.sortedWith(compareBy { it.length })
+```
 
 
 
